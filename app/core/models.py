@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
-                                        PermissionsMixin
+    PermissionsMixin
 
 
 class UserManager(BaseUserManager):
@@ -12,15 +12,27 @@ class UserManager(BaseUserManager):
         """Creates and saves the new user"""
         if not email:
             raise ValueError('Users must have an email address')
-        user = self.model(email=self.normalize_email(email), **extra_fields)  # same as creating a user model
+
+        # same as creating a user model
+        user = self.model(email=self.normalize_email(email), **extra_fields)
         user.set_password(raw_password=password)  # encrypt password
         user.save(using=self._db)
 
         return user
 
+    def create_superuser(self, email, password):
+        """Creates and saves a new superuser"""
+        user = self.create_user(email, password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
 
-class User(AbstractBaseUser, PermissionsMixin):  # provide out of the box django user model and permisions
-    """Custom user model that supports using email instead of username"""
+        return user
+
+
+class User(AbstractBaseUser, PermissionsMixin):  #
+    """Custom user model that supports using email instead of username.
+    Built on out of the box django user model and permissions"""
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
@@ -29,4 +41,3 @@ class User(AbstractBaseUser, PermissionsMixin):  # provide out of the box django
     objects = UserManager()  # make a new user manager for our object
 
     USERNAME_FIELD = 'email'  # change username to use email
-
