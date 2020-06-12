@@ -10,7 +10,7 @@ class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
         """Creates and saves the new user"""
-        user = self.model(email=email, **extra_fields)  # same as creating a user model
+        user = self.model(email=self.normalize_email(email), **extra_fields)  # same as creating a user model
         user.set_password(raw_password=password)  # encrypt password
         user.save(using=self._db)
 
