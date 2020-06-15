@@ -8,6 +8,7 @@ from rest_framework import status
 CREATE_USER_URL = reverse('user:create')
 TOKEN_URL = reverse('user:token')
 
+
 def create_user(**params):
     return get_user_model().objects.create_user(**params)
 
@@ -33,7 +34,7 @@ class PublicUserApiTests(TestCase):
 
     def test_user_exists(self):
         """test creating a user that already exists fails"""
-        payload = dict(email='test@test.com', password='testpass', name='Test User')
+        payload = dict(email='test@test.com', password='pass', name='Test User')
         create_user(**payload)
 
         res = self.client.post(CREATE_USER_URL, payload)
